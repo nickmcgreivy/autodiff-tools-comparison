@@ -26,7 +26,7 @@ int main() {
 	adouble y= f(x);
 	double dependent;
 	y >>= dependent;
-	trace_off();
+	trace_off(1);
 
 
 	// reverse pass
