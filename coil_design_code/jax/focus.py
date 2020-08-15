@@ -24,8 +24,7 @@ def biot_savart(r_eval, dl, l):
 	return B
 
 def quadratic_flux(r, dl, l, nn, sg):
-	alpha = biot_savart_surface(r, dl, l)
-	return (0.5 * np.sum(np.sum(nn * alpha, axis=-1) ** 2 * sg))
+	return (0.5 * np.sum(np.sum(nn * biot_savart_surface(r, dl, l), axis=-1) ** 2 * sg))
 
 def r(fc, theta):
 	r = np.zeros((3, fc.shape[1], NS + 1))
@@ -35,7 +34,8 @@ def r(fc, theta):
 
 def loss(r_surf, nn, sg, weight, fc):
 	l = r(fc, theta)
-	return quadratic_flux(r_surf, l[:,:-1,:] - l[:,1:,:], l[:,:-1,:], nn, sg) + weight * np.sum(dl)
+	dl = l[:,:-1,:] - l[:,1:,:]
+	return quadratic_flux(r_surf, dl, l[:,:-1,:], nn, sg) + weight * np.sum(dl)
 
 #######################################################################
 
@@ -50,8 +50,6 @@ grad_func = grad(objective_function) # d output / d input
 
 # jit-compile (JAX)
 jit_grad_func = jit(grad_func)
-
-
 
 #######################################################################
 
